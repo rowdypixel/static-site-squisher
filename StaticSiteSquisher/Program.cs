@@ -12,6 +12,7 @@ namespace StaticSiteSquisher
         static void Main(string[] args)
         {
             string folder = args[0];
+			Console.WriteLine ("Minifying {0}", folder);
             MinifyFolder(folder);
         }
 
@@ -29,6 +30,7 @@ namespace StaticSiteSquisher
                     var fileName = Path.GetFileNameWithoutExtension(file);
                     var minSheetPath = Path.Combine(path, string.Format("{0}.min.css", fileName));
 
+					Console.WriteLine ("\tMinifying {0}", file);
                     File.WriteAllText(minSheetPath, miniSheet);
                 }
 
@@ -41,17 +43,16 @@ namespace StaticSiteSquisher
                     var fileName = Path.GetFileNameWithoutExtension(file);
                     var minSheetPath = Path.Combine(path, string.Format("{0}.min.js", fileName));
 
+					Console.WriteLine ("\tMinifying {0}", file);
                     File.WriteAllText(minSheetPath, miniSheet);
                 }
 
-                if (Path.GetExtension(file) == ".html" || Path.GetExtension(file) == ".htm")
+               if (Path.GetExtension(file) == ".html" || Path.GetExtension(file) == ".htm")
                 {
                     var contents = File.ReadAllText(file);
                     var miniSheet = MinifyHtml(contents);
 
-
-                    var fileName = Path.GetFileNameWithoutExtension(file);
-
+					Console.WriteLine ("\tMinifying {0}", file);
                     File.WriteAllText(file, miniSheet); // we want to replace html files.
                 }
 
@@ -61,14 +62,12 @@ namespace StaticSiteSquisher
             {
                 MinifyFolder(folder);
             }
-
-            
-            
         }
 
         private static string MinifyHtml(string html)
         {
-            html = Regex.Replace(html, @"\s+", " ");
+			// This is removing the ending } on my JS, so don't run this regex.
+           /* html = Regex.Replace(html, @"\s+", " ");*/
             html = Regex.Replace(html, @"\s*\n\s*", "\n");
             html = Regex.Replace(html, @"\s*\>\s*\<\s*", "><");
             html = Regex.Replace(html, @"<!--(.*?)-->", "");   //Remove comments
@@ -86,6 +85,9 @@ namespace StaticSiteSquisher
 
             // fix for Google Analytics
             html = html.Replace("//www.google-analytics.com/analytics.min.js", "//www.google-analytics.com/analytics.js");
+
+			// fix for Disqus
+			html = html.Replace("dsq.src = '//' + disqus_shortname + '.disqus.com/embed.min.js'", "dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'");
             
             return html;
 
