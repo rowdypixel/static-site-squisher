@@ -22,7 +22,7 @@ namespace StaticSiteSquisher
             Microsoft.Ajax.Utilities.Minifier mini = new Microsoft.Ajax.Utilities.Minifier();
             foreach (var file in Directory.GetFiles(path))
             {
-                if (Path.GetExtension(file) == ".css")
+                if (Path.GetExtension(file) == ".css" && !(Path.GetFileName(file).Contains(".min.css")))
                 {
                     var contents = File.ReadAllText(file);
                     var miniSheet = mini.MinifyStyleSheet(contents);
@@ -35,7 +35,7 @@ namespace StaticSiteSquisher
                     File.WriteAllText(minSheetPath, miniSheet);
                 }
 
-                if (Path.GetExtension(file) == ".js")
+                if (Path.GetExtension(file) == ".js" && !(Path.GetFileName(file).Contains(".min.js")))
                 {
                     var contents = File.ReadAllText(file);
                     var miniSheet = mini.MinifyJavaScript(contents);
@@ -66,7 +66,6 @@ namespace StaticSiteSquisher
 
         private static string MinifyHtml(string html)
         {
-			// This is removing the ending } on my JS, so don't run this regex.
             html = Regex.Replace(html, @"(?s)\s+(?!(?:(?!</?pre\b).)*</pre>)", " ");
             html = Regex.Replace(html, @"(?s)\s*\n\s*(?!(?:(?!</?pre\b).)*</pre>)", "\n");
             html = Regex.Replace(html, @"(?s)\s*\>\s*\<\s*(?!(?:(?!</?pre\b).)*</pre>)", "><");
