@@ -67,10 +67,10 @@ namespace StaticSiteSquisher
         private static string MinifyHtml(string html)
         {
 			// This is removing the ending } on my JS, so don't run this regex.
-           /* html = Regex.Replace(html, @"\s+", " ");*/
-            html = Regex.Replace(html, @"\s*\n\s*", "\n");
-            html = Regex.Replace(html, @"\s*\>\s*\<\s*", "><");
-            html = Regex.Replace(html, @"<!--(.*?)-->", "");   //Remove comments
+            // html = Regex.Replace(html, @"(?s)\s+(?!(?:(?!</?pre\b).)*</pre>)", " ");
+            html = Regex.Replace(html, @"(?s)\s*\n\s*(?!(?:(?!</?pre\b).)*</pre>)", "\n");
+            html = Regex.Replace(html, @"(?s)\s*\>\s*\<\s*(?!(?:(?!</?pre\b).)*</pre>)", "><");
+            html = Regex.Replace(html, @"(?s)<!--((?:(?!</?pre\b).)*?)-->(?!(?:(?!</?pre\b).)*</pre>)", "");
 
             // single-line doctype must be preserved 
             var firstEndBracketPosition = html.IndexOf(">");
