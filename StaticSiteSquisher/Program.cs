@@ -106,18 +106,8 @@ namespace StaticSiteSquisher
             }
 
             html = doc.DocumentNode.OuterHtml;
-            
-            // html = html.Replace(".css", ".min.css");
-            // html = html.Replace(".js", ".min.js");
 
-            // fix for Google Analytics
-            html = html.Replace("//www.google-analytics.com/analytics.min.js", "//www.google-analytics.com/analytics.js");
-
-			// fix for Disqus
-			html = html.Replace(".disqus.com/embed.min.js", ".disqus.com/embed.js");
-            
             return html;
-
         }
     }
 }
