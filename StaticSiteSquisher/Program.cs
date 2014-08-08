@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 namespace StaticSiteSquisher
 {
     class Program
@@ -67,7 +68,7 @@ namespace StaticSiteSquisher
         private static string MinifyHtml(string html)
         {
 			// This is removing the ending } on my JS, so don't run this regex.
-            // html = Regex.Replace(html, @"(?s)\s+(?!(?:(?!</?pre\b).)*</pre>)", " ");
+            html = Regex.Replace(html, @"(?s)\s+(?!(?:(?!</?pre\b).)*</pre>)", " ");
             html = Regex.Replace(html, @"(?s)\s*\n\s*(?!(?:(?!</?pre\b).)*</pre>)", "\n");
             html = Regex.Replace(html, @"(?s)\s*\>\s*\<\s*(?!(?:(?!</?pre\b).)*</pre>)", "><");
             html = Regex.Replace(html, @"(?s)<!--((?:(?!</?pre\b).)*?)-->(?!(?:(?!</?pre\b).)*</pre>)", "");
@@ -80,8 +81,34 @@ namespace StaticSiteSquisher
                 html = html.Insert(firstEndBracketPosition, ">");
             }
 
-            html = html.Replace(".css", ".min.css");
-            html = html.Replace(".js", ".min.js");
+
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(html);
+
+            var scripts = doc.DocumentNode.SelectNodes("//script[@src]");
+            if (scripts != null)
+            {
+                foreach (var script in scripts)
+                {
+                    HtmlAttribute attr = script.Attributes["src"];
+                    attr.Value = attr.Value.Replace(".js", ".min.js");
+                }
+            }
+
+            var stylesheets = doc.DocumentNode.SelectNodes("//link[@href]");
+            if (stylesheets != null)
+            {
+                foreach (var stylesheet in stylesheets)
+                {
+                    HtmlAttribute attr = stylesheet.Attributes["href"];
+                    attr.Value = attr.Value.Replace(".css", ".min.css");
+                }
+            }
+
+            html = doc.DocumentNode.OuterHtml;
+            
+            // html = html.Replace(".css", ".min.css");
+            // html = html.Replace(".js", ".min.js");
 
             // fix for Google Analytics
             html = html.Replace("//www.google-analytics.com/analytics.min.js", "//www.google-analytics.com/analytics.js");
