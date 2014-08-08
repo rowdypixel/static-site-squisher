@@ -56,7 +56,6 @@ namespace StaticSiteSquisher
 					Console.WriteLine ("\tMinifying {0}", file);
                     File.WriteAllText(file, miniSheet); // we want to replace html files.
                 }
-
             }
 
             foreach(var folder in Directory.GetDirectories(path))
@@ -85,13 +84,20 @@ namespace StaticSiteSquisher
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
 
-            var scripts = doc.DocumentNode.SelectNodes("//script[@src]");
+            var scripts = doc.DocumentNode.SelectNodes("//script");
             if (scripts != null)
             {
                 foreach (var script in scripts)
                 {
                     HtmlAttribute attr = script.Attributes["src"];
-                    attr.Value = attr.Value.Replace(".js", ".min.js");
+                    if (attr != null)
+                        attr.Value = attr.Value.Replace(".js", ".min.js");
+                    else
+                    {
+                        Microsoft.Ajax.Utilities.Minifier mini = new Microsoft.Ajax.Utilities.Minifier();
+                        var minified = mini.MinifyJavaScript(script.InnerText);
+                        script.InnerHtml = minified;
+                    }
                 }
             }
 
