@@ -87,7 +87,7 @@ namespace StaticSiteSquisher
             html = html.Replace("//www.google-analytics.com/analytics.min.js", "//www.google-analytics.com/analytics.js");
 
 			// fix for Disqus
-			html = html.Replace("dsq.src = '//' + disqus_shortname + '.disqus.com/embed.min.js'", "dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'");
+			html = html.Replace(".disqus.com/embed.min.js", ".disqus.com/embed.js");
             
             return html;
 
