@@ -100,18 +100,28 @@ namespace StaticSiteSquisher
                 }
             }
 
-            var stylesheets = doc.DocumentNode.SelectNodes("//link[@href]");
-            if (stylesheets != null)
+            var linkedStylesheets = doc.DocumentNode.SelectNodes("//link[@href]");
+            if (linkedStylesheets != null)
             {
-                foreach (var stylesheet in stylesheets)
+                foreach (var stylesheet in linkedStylesheets)
                 {
                     HtmlAttribute attr = stylesheet.Attributes["href"];
                     attr.Value = attr.Value.Replace(".css", ".min.css");
                 }
             }
 
-            html = doc.DocumentNode.OuterHtml;
+            var embeddedStyleSheets = doc.DocumentNode.SelectNodes("//style");
+            if (embeddedStyleSheets != null)
+            {
+                foreach (var stylesheet in embeddedStyleSheets)
+                {
+                    Microsoft.Ajax.Utilities.Minifier mini = new Microsoft.Ajax.Utilities.Minifier();
+                    var minified = mini.MinifyStyleSheet(stylesheet.InnerText);
+                    stylesheet.InnerHtml = minified;
+                }
+            }
 
+            html = doc.DocumentNode.OuterHtml;
             return html;
         }
     }
