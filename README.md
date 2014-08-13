@@ -18,4 +18,6 @@ Usage
 
 License
 ---
-Source for this library is released under the terms of the MIT License. 
+Source for this library is released under the terms of the MIT License.
+
+[![Build status](https://ci.appveyor.com/api/projects/status/il7l9ykbi72pua2u/branch/default)](https://ci.appveyor.com/project/rowdypixel/static-site-squisher/branch/default)
